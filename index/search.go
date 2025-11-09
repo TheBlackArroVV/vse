@@ -1,6 +1,8 @@
 package index
 
-import "strings"
+import (
+	"strings"
+)
 
 func (index *Index) Search(searchableString string) []IndexDocument {
 	foundDocuments := []IndexDocument{}
@@ -13,5 +15,15 @@ func (index *Index) Search(searchableString string) []IndexDocument {
 		}
 	}
 
+	return foundDocuments
+}
+
+func (index *Index) SearchByQuery(query map[string][]string) []IndexDocument {
+	foundDocuments := []IndexDocument{}
+
+	searchableStrings := query["should"]
+	for _, searchableString := range searchableStrings {
+		foundDocuments = append(foundDocuments, index.Search(searchableString)...)
+	}
 	return foundDocuments
 }
