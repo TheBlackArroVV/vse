@@ -21,7 +21,7 @@ func TestSearch(t *testing.T) {
 	}
 }
 
-func TestSearchByQuqery(t *testing.T) {
+func TestSearchByShouldQuery(t *testing.T) {
 	index := New("index")
 
 	index.Write("test", "test")
@@ -40,6 +40,25 @@ func TestSearchByQuqery(t *testing.T) {
 	}
 
 	if results[1].name != "other" {
+		t.Error("You got wrong result")
+	}
+}
+
+func TestSearchByMustQuery(t *testing.T) {
+	index := New("index")
+
+	index.Write("test", "test other")
+	index.Write("other", "other")
+
+	params := make(map[string][]string)
+	params["must"] = []string{"test", "other"}
+	results := index.SearchByQuery(params)
+
+	if len(results) != 1 {
+		t.Error("too little results")
+	}
+
+	if results[0].name != "test" {
 		t.Error("You got wrong result")
 	}
 }

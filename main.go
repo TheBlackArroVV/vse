@@ -12,11 +12,8 @@ func main() {
 	index.Write("name1", "what beatiful we have today")
 	index.Write("name2", "test")
 
-	// fmt.Println(index)
-	// fmt.Println(index.Search("What"))
-
 	params := make(map[string][]string)
-	params["should"] = []string{"test", "weather", "beatiful", "what"}
+	params["must"] = []string{"what", "weather", "we"}
 
 	fmt.Println(index.SearchByQuery(params))
 }
