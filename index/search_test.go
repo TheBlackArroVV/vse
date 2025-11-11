@@ -7,8 +7,8 @@ import (
 func TestSearch(t *testing.T) {
 	index := New("index")
 
-	index.Write("test", "test")
-	index.Write("other", "other")
+	index.Write("test")
+	index.Write("other")
 
 	results := index.Search("test")
 
@@ -16,7 +16,7 @@ func TestSearch(t *testing.T) {
 		t.Error("too many results")
 	}
 
-	if results[0].name != "test" {
+	if results[0].words[0] != "test" {
 		t.Error("You got wrong result")
 	}
 }
@@ -24,8 +24,8 @@ func TestSearch(t *testing.T) {
 func TestSearchByShouldQuery(t *testing.T) {
 	index := New("index")
 
-	index.Write("test", "test")
-	index.Write("other", "other")
+	index.Write("test")
+	index.Write("other")
 
 	params := make(map[string][]string)
 	params["should"] = []string{"test", "other"}
@@ -35,11 +35,11 @@ func TestSearchByShouldQuery(t *testing.T) {
 		t.Error("too little results")
 	}
 
-	if results[0].name != "test" {
+	if results[0].words[0] != "test" {
 		t.Error("You got wrong result")
 	}
 
-	if results[1].name != "other" {
+	if results[1].words[0] != "other" {
 		t.Error("You got wrong result")
 	}
 }
@@ -47,8 +47,8 @@ func TestSearchByShouldQuery(t *testing.T) {
 func TestSearchByMustQuery(t *testing.T) {
 	index := New("index")
 
-	index.Write("test", "test other")
-	index.Write("other", "other")
+	index.Write("test other")
+	index.Write("other")
 
 	params := make(map[string][]string)
 	params["must"] = []string{"test", "other"}
@@ -58,7 +58,36 @@ func TestSearchByMustQuery(t *testing.T) {
 		t.Error("too little results")
 	}
 
-	if results[0].name != "test" {
+	if results[0].words[0] != "test" {
+		t.Error("You got wrong result")
+	}
+}
+
+func TestSearchByBothMustAndShouldQuery(t *testing.T) {
+	index := New("index")
+
+	index.Write("test other")
+	index.Write("other")
+	index.Write("second")
+
+	params := make(map[string][]string)
+	params["must"] = []string{"test", "other"}
+	params["should"] = []string{"second"}
+	results := index.SearchByQuery(params)
+
+	if len(results) != 2 {
+		t.Error("too little results")
+	}
+
+	if results[0].words[0] != "second" {
+		t.Error("You got wrong result")
+	}
+
+	if results[1].words[0] != "test" {
+		t.Error("You got wrong result")
+	}
+
+	if results[1].words[1] != "other" {
 		t.Error("You got wrong result")
 	}
 }

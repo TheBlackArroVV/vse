@@ -1,18 +1,12 @@
 package index
 
-import (
-	"strings"
-)
-
 func (index *Index) Search(searchableString string) []IndexDocument {
 	foundDocuments := []IndexDocument{}
 
-	for _, document := range index.documents {
-		for _, word := range document.words {
-			if word == strings.ToLower(searchableString) {
-				foundDocuments = append(foundDocuments, document)
-			}
-		}
+	foundDocumentIds := index.mappedIndexData.mappedData[searchableString].Values
+
+	for _, foundDocumentId := range foundDocumentIds {
+		foundDocuments = append(foundDocuments, index.documents[foundDocumentId])
 	}
 
 	return foundDocuments
@@ -47,19 +41,17 @@ func (index *Index) searchByMust(searchableWords []string) []IndexDocument {
 	}
 
 	foundDocuments := []IndexDocument{}
-	includedWords := 0
+	includedWords := make(map[int64][]int)
 
-	for _, document := range index.documents {
-		includedWords = 0
-		for _, searchableWord := range searchableWords {
-			for _, word := range document.words {
-				if word == searchableWord {
-					includedWords = includedWords + 1
-				}
-			}
+	for idx, searchableString := range searchableWords {
+		for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString].Values {
+			includedWords[foundDocumentId] = append(includedWords[foundDocumentId], idx)
 		}
-		if includedWords == len(searchableWords) {
-			foundDocuments = append(foundDocuments, document)
+	}
+
+	for foundDocumentId, includedWord := range includedWords {
+		if len(includedWord) == len(searchableWords) {
+			foundDocuments = append(foundDocuments, index.documents[foundDocumentId])
 		}
 	}
 

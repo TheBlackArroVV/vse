@@ -1,31 +1,49 @@
 package index
 
-import "strings"
+import (
+	"elastic_go/utils"
+	"math/rand/v2"
+	"strings"
+)
 
 type IndexDocument struct {
-	name  string
 	words []string
 }
 
 type Index struct {
-	name      string
-	documents []IndexDocument
+	name            string
+	documents       map[int64]IndexDocument
+	mappedIndexData MappedIndexData
+}
+
+type MappedIndexData struct {
+	mappedData map[string]utils.Set[int64]
 }
 
 func New(name string) Index {
 	return Index{
 		name:      name,
-		documents: []IndexDocument{},
+		documents: make(map[int64]IndexDocument),
 	}
 }
 
-func (index *Index) Write(name, value string) *Index {
+func (index *Index) Write(value string) *Index {
+	documentId := rand.Int64N(100000)
+	transformedString := utils.TransformStrings(value)
 	indexedData := IndexDocument{
-		name:  name,
-		words: strings.Split(strings.ToLower(value), " "),
+		words: strings.Split(transformedString, " "),
 	}
 
-	index.documents = append(index.documents, indexedData)
+	if index.mappedIndexData.mappedData == nil {
+		index.mappedIndexData.mappedData = make(map[string]utils.Set[int64])
+	}
+
+	for word := range strings.SplitSeq(transformedString, " ") {
+		index.mappedIndexData.mappedData[word] = index.mappedIndexData.mappedData[word].Add(documentId)
+
+	}
+
+	index.documents[documentId] = indexedData
 
 	return index
 }

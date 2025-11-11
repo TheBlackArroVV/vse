@@ -8,9 +8,9 @@ import (
 func main() {
 	index := index.New("test_index")
 
-	index.Write("name", "What a weather we have today")
-	index.Write("name1", "what beatiful we have today")
-	index.Write("name2", "test")
+	index.Write("What a weather we have today")
+	index.Write("what beatiful we have today")
+	index.Write("test")
 
 	params := make(map[string][]string)
 	params["must"] = []string{"what", "weather", "we"}
