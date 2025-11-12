@@ -2,11 +2,11 @@ package index
 
 import (
 	"elastic_go/utils"
-	"math/rand/v2"
 	"strings"
 )
 
 type IndexDocument struct {
+	id    int64
 	words []string
 }
 
@@ -14,10 +14,12 @@ type Index struct {
 	name            string
 	documents       map[int64]IndexDocument
 	mappedIndexData MappedIndexData
+	currentIdx      int64
 }
 
 type MappedIndexData struct {
-	mappedData map[string]utils.Set[int64]
+	values     utils.Set[int64]
+	mappedData map[string][]int64
 }
 
 type Query struct {
@@ -33,22 +35,24 @@ func New(name string) Index {
 }
 
 func (index *Index) Write(value string) *Index {
-	documentId := rand.Int64N(100000)
+	documentId := index.currentIdx + 1
 	transformedString := utils.TransformStrings(value)
 	indexedData := IndexDocument{
+		id:    documentId,
 		words: strings.Split(transformedString, " "),
 	}
 
 	if index.mappedIndexData.mappedData == nil {
-		index.mappedIndexData.mappedData = make(map[string]utils.Set[int64])
+		index.mappedIndexData.mappedData = make(map[string][]int64)
 	}
 
 	for word := range strings.SplitSeq(transformedString, " ") {
-		index.mappedIndexData.mappedData[word] = index.mappedIndexData.mappedData[word].Add(documentId)
-
+		index.mappedIndexData.values.Add(documentId)
+		index.mappedIndexData.mappedData[word] = index.mappedIndexData.values.Values
 	}
 
 	index.documents[documentId] = indexedData
+	index.currentIdx = index.currentIdx + 1
 
 	return index
 }

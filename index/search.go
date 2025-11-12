@@ -1,11 +1,18 @@
 package index
 
+import (
+	"elastic_go/utils"
+)
+
 func (index *Index) Search(searchableString string) []IndexDocument {
 	foundDocuments := []IndexDocument{}
+	foundDocumentIds := utils.Set[int64]{}
 
-	foundDocumentIds := index.mappedIndexData.mappedData[searchableString].Values
+	for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString] {
+		foundDocumentIds.Add(index.documents[foundDocumentId].id)
+	}
 
-	for _, foundDocumentId := range foundDocumentIds {
+	for _, foundDocumentId := range foundDocumentIds.Values {
 		foundDocuments = append(foundDocuments, index.documents[foundDocumentId])
 	}
 
@@ -44,7 +51,7 @@ func (index *Index) searchByMust(searchableWords []string) []IndexDocument {
 	includedWords := make(map[int64][]int)
 
 	for idx, searchableString := range searchableWords {
-		for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString].Values {
+		for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString] {
 			includedWords[foundDocumentId] = append(includedWords[foundDocumentId], idx)
 		}
 	}
