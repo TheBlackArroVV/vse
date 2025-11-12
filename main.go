@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+type Query = index.Query
+
 func main() {
 	index := index.New("test_index")
 
@@ -12,8 +14,9 @@ func main() {
 	index.Write("what beatiful we have today")
 	index.Write("test")
 
-	params := make(map[string][]string)
-	params["must"] = []string{"what", "weather", "we"}
+	query := Query{
+		Must: []string{"what", "weather", "we"},
+	}
 
-	fmt.Println(index.SearchByQuery(params))
+	fmt.Println(index.SearchByQuery(query))
 }

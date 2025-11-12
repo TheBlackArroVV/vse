@@ -27,9 +27,10 @@ func TestSearchByShouldQuery(t *testing.T) {
 	index.Write("test")
 	index.Write("other")
 
-	params := make(map[string][]string)
-	params["should"] = []string{"test", "other"}
-	results := index.SearchByQuery(params)
+	query := Query{
+		Should: []string{"test", "other"},
+	}
+	results := index.SearchByQuery(query)
 
 	if len(results) != 2 {
 		t.Error("too little results")
@@ -50,9 +51,10 @@ func TestSearchByMustQuery(t *testing.T) {
 	index.Write("test other")
 	index.Write("other")
 
-	params := make(map[string][]string)
-	params["must"] = []string{"test", "other"}
-	results := index.SearchByQuery(params)
+	query := Query{
+		Must: []string{"test", "other"},
+	}
+	results := index.SearchByQuery(query)
 
 	if len(results) != 1 {
 		t.Error("too little results")
@@ -70,10 +72,11 @@ func TestSearchByBothMustAndShouldQuery(t *testing.T) {
 	index.Write("other")
 	index.Write("second")
 
-	params := make(map[string][]string)
-	params["must"] = []string{"test", "other"}
-	params["should"] = []string{"second"}
-	results := index.SearchByQuery(params)
+	query := Query{
+		Must:   []string{"test", "other"},
+		Should: []string{"second"},
+	}
+	results := index.SearchByQuery(query)
 
 	if len(results) != 2 {
 		t.Error("too little results")

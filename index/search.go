@@ -12,11 +12,11 @@ func (index *Index) Search(searchableString string) []IndexDocument {
 	return foundDocuments
 }
 
-func (index *Index) SearchByQuery(query map[string][]string) []IndexDocument {
+func (index *Index) SearchByQuery(query Query) []IndexDocument {
 	foundDocuments := []IndexDocument{}
 
-	foundDocuments = append(foundDocuments, index.searchByShould(query["should"])...)
-	foundDocuments = append(foundDocuments, index.searchByMust(query["must"])...)
+	foundDocuments = append(foundDocuments, index.searchByShould(query.Should)...)
+	foundDocuments = append(foundDocuments, index.searchByMust(query.Must)...)
 
 	return foundDocuments
 }
