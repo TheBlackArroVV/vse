@@ -34,9 +34,16 @@ func (index *Index) searchByShould(searchableWords []string) []IndexDocument {
 	}
 
 	foundDocuments := []IndexDocument{}
+	foundDocumentIds := utils.Set[int64]{}
 
 	for _, searchableString := range searchableWords {
-		foundDocuments = append(foundDocuments, index.Search(searchableString)...)
+		for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString] {
+			foundDocumentIds.Add(index.documents[foundDocumentId].id)
+		}
+	}
+
+	for _, foundDocumentId := range foundDocumentIds.Values {
+		foundDocuments = append(foundDocuments, index.documents[foundDocumentId])
 	}
 
 	return foundDocuments
