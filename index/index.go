@@ -48,7 +48,7 @@ func (index *Index) Write(value string) *Index {
 
 	for word := range strings.SplitSeq(transformedString, " ") {
 		index.mappedIndexData.values.Add(documentId)
-		index.mappedIndexData.mappedData[word] = index.mappedIndexData.values.Values
+		index.mappedIndexData.mappedData[word] = append(index.mappedIndexData.mappedData[word], documentId)
 	}
 
 	index.documents[documentId] = indexedData
