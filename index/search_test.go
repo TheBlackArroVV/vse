@@ -23,15 +23,15 @@ func TestSearch(t *testing.T) {
 		t.Error("You got wrong result")
 	}
 
-	if results[2].words[0] != "tesc" {
+	if results[1].words[0] != "tesc" {
 		t.Error("You got wrong result")
 	}
 
-	if results[3].words[0] != "tes" {
+	if results[2].words[0] != "tes" {
 		t.Error("You got wrong result")
 	}
 
-	if results[1].words[0] != "test1" {
+	if results[3].words[0] != "test1" {
 		t.Error("You got wrong result")
 	}
 }
@@ -41,13 +41,16 @@ func TestSearchByShouldQuery(t *testing.T) {
 
 	index.Write("test")
 	index.Write("other")
+	index.Write("tesc")
+	index.Write("tes")
+	index.Write("test1")
 
 	query := Query{
 		Should: []string{"test", "other"},
 	}
 	results := index.SearchByQuery(query)
 
-	if len(results) != 2 {
+	if len(results) != 5 {
 		t.Error("too little results")
 	}
 
@@ -56,6 +59,18 @@ func TestSearchByShouldQuery(t *testing.T) {
 	}
 
 	if results[1].words[0] != "other" {
+		t.Error("You got wrong result")
+	}
+
+	if results[2].words[0] != "tesc" {
+		t.Error("You got wrong result")
+	}
+
+	if results[3].words[0] != "tes" {
+		t.Error("You got wrong result")
+	}
+
+	if results[4].words[0] != "test1" {
 		t.Error("You got wrong result")
 	}
 }
