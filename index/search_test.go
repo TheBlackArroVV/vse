@@ -102,6 +102,8 @@ func TestSearchByBothMustAndShouldQuery(t *testing.T) {
 	index.Write("test other")
 	index.Write("other")
 	index.Write("second")
+	index.Write("secon")
+	index.Write("seconc")
 
 	query := Query{
 		Must:   []string{"test", "other"},
@@ -109,7 +111,7 @@ func TestSearchByBothMustAndShouldQuery(t *testing.T) {
 	}
 	results := index.SearchByQuery(query)
 
-	if len(results) != 2 {
+	if len(results) != 4 {
 		t.Error("too little results")
 	}
 
@@ -122,6 +124,14 @@ func TestSearchByBothMustAndShouldQuery(t *testing.T) {
 	}
 
 	if results[1].words[1] != "other" {
+		t.Error("You got wrong result")
+	}
+
+	if results[2].words[0] != "secon" {
+		t.Error("You got wrong result")
+	}
+
+	if results[3].words[0] != "seconc" {
 		t.Error("You got wrong result")
 	}
 }
