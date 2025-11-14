@@ -12,12 +12,15 @@ type Query = models.Query
 
 func main() {
 	index := index.New("documents")
-	indexFolder(index, "")
+	indexFolder(index, os.Args[1])
 
 	query := Query{
-		Must: []string{"word"},
+		Must: []string{os.Args[2]},
 	}
-	fmt.Println(index.SearchByQuery(query))
+
+	for idx, result := range index.SearchByQuery(query) {
+		fmt.Printf("%d: %s", idx, result.Name)
+	}
 }
 
 func indexFolder(index index.Index, folder string) {
@@ -29,7 +32,7 @@ func indexFolder(index index.Index, folder string) {
 		} else {
 			path := filepath.Join(folder, entry.Name())
 			file, _ := os.ReadFile(path)
-			index.Write(entry.Name(), string(file))
+			index.Write(path, string(file))
 		}
 	}
 }
