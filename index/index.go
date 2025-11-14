@@ -25,11 +25,12 @@ func New(name string) Index {
 	}
 }
 
-func (index *Index) Write(value string) *Index {
+func (index *Index) Write(name, value string) *Index {
 	documentId := index.currentIdx + 1
 	transformedString := utils.TransformStrings(value)
 	indexedData := models.IndexDocument{
 		Id:    documentId,
+		Name:  name,
 		Words: strings.Split(transformedString, " "),
 	}
 

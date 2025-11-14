@@ -11,9 +11,9 @@ type Query = models.Query
 func main() {
 	index := index.New("test_index")
 
-	index.Write("What a weather we have today")
-	index.Write("what beatiful we have today")
-	index.Write("test")
+	index.Write("first document", "What a weather we have today")
+	index.Write("second document", "what beatiful we have today")
+	index.Write("third document", "test")
 
 	query := Query{
 		Must: []string{"what", "weather", "we"},
