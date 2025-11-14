@@ -19,19 +19,19 @@ func TestSearch(t *testing.T) {
 		t.Error("too many results")
 	}
 
-	if results[0].words[0] != "test" {
+	if results[0].Words[0] != "test" {
 		t.Error("You got wrong result")
 	}
 
-	if results[1].words[0] != "tesc" {
+	if results[1].Words[0] != "tesc" {
 		t.Error("You got wrong result")
 	}
 
-	if results[2].words[0] != "tes" {
+	if results[2].Words[0] != "tes" {
 		t.Error("You got wrong result")
 	}
 
-	if results[3].words[0] != "test1" {
+	if results[3].Words[0] != "test1" {
 		t.Error("You got wrong result")
 	}
 }
@@ -54,23 +54,23 @@ func TestSearchByShouldQuery(t *testing.T) {
 		t.Error("too little results")
 	}
 
-	if results[0].words[0] != "test" {
+	if results[0].Words[0] != "test" {
 		t.Error("You got wrong result")
 	}
 
-	if results[1].words[0] != "other" {
+	if results[1].Words[0] != "other" {
 		t.Error("You got wrong result")
 	}
 
-	if results[2].words[0] != "tesc" {
+	if results[2].Words[0] != "tesc" {
 		t.Error("You got wrong result")
 	}
 
-	if results[3].words[0] != "tes" {
+	if results[3].Words[0] != "tes" {
 		t.Error("You got wrong result")
 	}
 
-	if results[4].words[0] != "test1" {
+	if results[4].Words[0] != "test1" {
 		t.Error("You got wrong result")
 	}
 }
@@ -90,13 +90,12 @@ func TestSearchByMustQuery(t *testing.T) {
 		t.Error("too little results")
 	}
 
-	if results[0].words[0] != "test" {
+	if results[0].Words[0] != "test" {
 		t.Error("You got wrong result")
 	}
 }
 
 func TestSearchByBothMustAndShouldQuery(t *testing.T) {
-	t.SkipNow()
 	index := New("index")
 
 	index.Write("test other")
@@ -107,7 +106,7 @@ func TestSearchByBothMustAndShouldQuery(t *testing.T) {
 
 	query := Query{
 		Must:   []string{"test", "other"},
-		Should: []string{"second"},
+		Should: []string{"second", "test"},
 	}
 	results := index.SearchByQuery(query)
 
@@ -115,23 +114,23 @@ func TestSearchByBothMustAndShouldQuery(t *testing.T) {
 		t.Error("too little results")
 	}
 
-	if results[0].words[0] != "second" {
+	if results[0].Words[0] != "test" {
 		t.Error("You got wrong result")
 	}
 
-	if results[1].words[0] != "test" {
+	if results[0].Words[1] != "other" {
 		t.Error("You got wrong result")
 	}
 
-	if results[1].words[1] != "other" {
+	if results[1].Words[0] != "second" {
 		t.Error("You got wrong result")
 	}
 
-	if results[2].words[0] != "secon" {
+	if results[2].Words[0] != "secon" {
 		t.Error("You got wrong result")
 	}
 
-	if results[3].words[0] != "seconc" {
+	if results[3].Words[0] != "seconc" {
 		t.Error("You got wrong result")
 	}
 }

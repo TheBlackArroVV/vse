@@ -1,18 +1,14 @@
 package index
 
 import (
+	"elastic_go/models"
 	"elastic_go/utils"
 	"strings"
 )
 
-type IndexDocument struct {
-	id    int64
-	words []string
-}
-
 type Index struct {
 	name            string
-	documents       map[int64]IndexDocument
+	documents       map[int64]models.IndexDocument
 	mappedIndexData MappedIndexData
 	currentIdx      int64
 }
@@ -30,16 +26,16 @@ type Query struct {
 func New(name string) Index {
 	return Index{
 		name:      name,
-		documents: make(map[int64]IndexDocument),
+		documents: make(map[int64]models.IndexDocument),
 	}
 }
 
 func (index *Index) Write(value string) *Index {
 	documentId := index.currentIdx + 1
 	transformedString := utils.TransformStrings(value)
-	indexedData := IndexDocument{
-		id:    documentId,
-		words: strings.Split(transformedString, " "),
+	indexedData := models.IndexDocument{
+		Id:    documentId,
+		Words: strings.Split(transformedString, " "),
 	}
 
 	if index.mappedIndexData.mappedData == nil {
@@ -55,4 +51,14 @@ func (index *Index) Write(value string) *Index {
 	index.currentIdx = index.currentIdx + 1
 
 	return index
+}
+
+func (index *Index) FindDocumentsByIds(ids []int64) []models.IndexDocument {
+	foundDocuments := []models.IndexDocument{}
+
+	for _, foundDocumentId := range ids {
+		foundDocuments = append(foundDocuments, index.documents[foundDocumentId])
+	}
+
+	return foundDocuments
 }

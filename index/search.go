@@ -1,62 +1,61 @@
 package index
 
 import (
+	"elastic_go/models"
 	. "elastic_go/utils"
 )
 
-var MAXIMUM_ALLOWED_DISTANCE = 1
+const MAXIMUM_ALLOWED_DISTANCE = 1
 
-func (index *Index) Search(searchableString string) []IndexDocument {
-	foundDocuments := []IndexDocument{}
+func (index *Index) Search(searchableString string) []models.IndexDocument {
 	foundDocumentIds := Set[int64]{}
 
 	for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString] {
-		foundDocumentIds.Add(index.documents[foundDocumentId].id)
+		foundDocumentIds.Add(index.documents[foundDocumentId].Id)
 	}
 
 	for key := range index.mappedIndexData.mappedData {
 		if LevenshteinDistance(searchableString, key) == MAXIMUM_ALLOWED_DISTANCE {
 			for _, foundDocumentId := range index.mappedIndexData.mappedData[key] {
-				foundDocumentIds.Add(index.documents[foundDocumentId].id)
+				foundDocumentIds.Add(index.documents[foundDocumentId].Id)
 			}
 		}
 	}
 
 	SortArray(foundDocumentIds.Values)
 
-	for _, foundDocumentId := range foundDocumentIds.Values {
-		foundDocuments = append(foundDocuments, index.documents[foundDocumentId])
+	return index.FindDocumentsByIds(foundDocumentIds.Values)
+}
+
+func (index *Index) SearchByQuery(query Query) []models.IndexDocument {
+	foundDocuments := IndexDocumentSet{}
+
+	for _, foundDocument := range index.searchByShould(query.Should) {
+		foundDocuments.Add(foundDocument)
+	}
+	for _, foundDocument := range index.searchByMust(query.Must) {
+		foundDocuments.Add(foundDocument)
 	}
 
-	return foundDocuments
+	return foundDocuments.Values
 }
 
-func (index *Index) SearchByQuery(query Query) []IndexDocument {
-	foundDocuments := []IndexDocument{}
-
-	foundDocuments = append(foundDocuments, index.searchByShould(query.Should)...)
-	foundDocuments = append(foundDocuments, index.searchByMust(query.Must)...)
-
-	return foundDocuments
-}
-
-func (index *Index) searchByShould(searchableWords []string) []IndexDocument {
+func (index *Index) searchByShould(searchableWords []string) []models.IndexDocument {
 	if len(searchableWords) == 0 {
-		return []IndexDocument{}
+		return []models.IndexDocument{}
 	}
 
-	foundDocuments := []IndexDocument{}
 	foundDocumentIds := Set[int64]{}
 
 	for _, searchableString := range searchableWords {
 		for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString] {
-			foundDocumentIds.Add(index.documents[foundDocumentId].id)
+			foundDocumentIds.Add(index.documents[foundDocumentId].Id)
 		}
 
 		for key := range index.mappedIndexData.mappedData {
 			if LevenshteinDistance(searchableString, key) == MAXIMUM_ALLOWED_DISTANCE {
 				for _, foundDocumentId := range index.mappedIndexData.mappedData[key] {
-					foundDocumentIds.Add(index.documents[foundDocumentId].id)
+					foundDocumentIds.Add(index.documents[foundDocumentId].Id)
 				}
 			}
 		}
@@ -64,19 +63,15 @@ func (index *Index) searchByShould(searchableWords []string) []IndexDocument {
 
 	SortArray(foundDocumentIds.Values)
 
-	for _, foundDocumentId := range foundDocumentIds.Values {
-		foundDocuments = append(foundDocuments, index.documents[foundDocumentId])
-	}
-
-	return foundDocuments
+	return index.FindDocumentsByIds(foundDocumentIds.Values)
 }
 
-func (index *Index) searchByMust(searchableWords []string) []IndexDocument {
+func (index *Index) searchByMust(searchableWords []string) []models.IndexDocument {
 	if len(searchableWords) == 0 {
-		return []IndexDocument{}
+		return []models.IndexDocument{}
 	}
 
-	foundDocuments := []IndexDocument{}
+	foundDocuments := []models.IndexDocument{}
 	includedWords := make(map[int64][]int)
 
 	for idx, searchableString := range searchableWords {

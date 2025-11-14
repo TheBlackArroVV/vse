@@ -22,12 +22,35 @@ func TestWrite(t *testing.T) {
 	}
 
 	for idx, words := range index.documents {
-		if words.words[0] != "test" {
+		if words.Words[0] != "test" {
 			t.Error("Something wrong with index naming")
 		}
 
 		if idx != 1 {
 			t.Error("Something wrong with index naming")
 		}
+	}
+}
+
+func TestFindDocumentsByIds(t *testing.T) {
+	index := New("index")
+	index.Write("1")
+	index.Write("2")
+	index.Write("3")
+	index.Write("4")
+	index.Write("5")
+
+	results := index.FindDocumentsByIds([]int64{2, 4})
+
+	if len(results) != 2 {
+		t.Error("Wrong number of results")
+	}
+
+	if results[0].Id != 2 || results[0].Words[0] != "2" {
+		t.Error("Wrong record id returned")
+	}
+
+	if results[1].Id != 4 || results[1].Words[0] != "4" {
+		t.Error("Wrong record id returned")
 	}
 }
