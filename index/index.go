@@ -18,11 +18,6 @@ type MappedIndexData struct {
 	mappedData map[string][]int64
 }
 
-type Query struct {
-	Should []string
-	Must   []string
-}
-
 func New(name string) Index {
 	return Index{
 		name:      name,

@@ -2,10 +2,11 @@ package main
 
 import (
 	"elastic_go/index"
+	"elastic_go/models"
 	"fmt"
 )
 
-type Query = index.Query
+type Query = models.Query
 
 func main() {
 	index := index.New("test_index")

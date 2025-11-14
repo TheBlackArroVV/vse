@@ -22,16 +22,21 @@ func (index *Index) Search(searchableString string) []models.IndexDocument {
 		}
 	}
 
-	SortArray(foundDocumentIds.Values)
+	SortArray(foundDocumentIds.Values, "ASC")
 
 	return index.FindDocumentsByIds(foundDocumentIds.Values)
 }
 
-func (index *Index) SearchByQuery(query Query) []models.IndexDocument {
+func (index *Index) SearchByQuery(query models.Query) []models.IndexDocument {
 	foundDocuments := IndexDocumentSet{}
 
 	foundDocuments.AddMany(index.searchByShould(query.Should))
 	foundDocuments.AddMany(index.searchByMust(query.Must))
+
+	if string(query.Order) == "" {
+		query.Order = "ASC"
+	}
+	SortIndexDocument(foundDocuments.Values, string(query.Order))
 
 	return foundDocuments.Values
 }
@@ -56,8 +61,6 @@ func (index *Index) searchByShould(searchableWords []string) []models.IndexDocum
 			}
 		}
 	}
-
-	SortArray(foundDocumentIds.Values)
 
 	return index.FindDocumentsByIds(foundDocumentIds.Values)
 }

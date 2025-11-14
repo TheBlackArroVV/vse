@@ -1,6 +1,7 @@
 package index
 
 import (
+	"elastic_go/models"
 	"testing"
 )
 
@@ -45,7 +46,7 @@ func TestSearchByShouldQuery(t *testing.T) {
 	index.Write("tes")
 	index.Write("test1")
 
-	query := Query{
+	query := models.Query{
 		Should: []string{"test", "other"},
 	}
 	results := index.SearchByQuery(query)
@@ -81,7 +82,7 @@ func TestSearchByMustQuery(t *testing.T) {
 	index.Write("test other")
 	index.Write("other")
 
-	query := Query{
+	query := models.Query{
 		Must: []string{"test", "other"},
 	}
 	results := index.SearchByQuery(query)
@@ -104,7 +105,7 @@ func TestSearchByBothMustAndShouldQuery(t *testing.T) {
 	index.Write("secon")
 	index.Write("seconc")
 
-	query := Query{
+	query := models.Query{
 		Must:   []string{"test", "other"},
 		Should: []string{"second", "test"},
 	}
