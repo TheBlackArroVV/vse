@@ -1,6 +1,8 @@
 package utils
 
-import "strings"
+import (
+	"strings"
+)
 
 func TransformStrings(string string) string {
 	return normalize(strings.ToLower(string))
@@ -13,7 +15,7 @@ func normalize(string string) string {
 		sb.WriteString(normalizeLetter(letter))
 	}
 
-	return sb.String()
+	return strings.Replace(sb.String(), "\n", " ", -1)
 }
 
 func normalizeLetter(letter string) string {

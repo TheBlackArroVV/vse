@@ -10,13 +10,13 @@ const MAXIMUM_ALLOWED_DISTANCE = 1
 func (index *Index) Search(searchableString string) []models.IndexDocument {
 	foundDocumentIds := Set[int64]{}
 
-	for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString] {
+	for _, foundDocumentId := range index.mappedData[searchableString] {
 		foundDocumentIds.Add(index.documents[foundDocumentId].Id)
 	}
 
-	for key := range index.mappedIndexData.mappedData {
+	for key := range index.mappedData {
 		if LevenshteinDistance(searchableString, key) == MAXIMUM_ALLOWED_DISTANCE {
-			for _, foundDocumentId := range index.mappedIndexData.mappedData[key] {
+			for _, foundDocumentId := range index.mappedData[key] {
 				foundDocumentIds.Add(index.documents[foundDocumentId].Id)
 			}
 		}
@@ -49,13 +49,14 @@ func (index *Index) searchByShould(searchableWords []string) []models.IndexDocum
 	foundDocumentIds := Set[int64]{}
 
 	for _, searchableString := range searchableWords {
-		for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString] {
+		searchableString = TransformStrings(searchableString)
+		for _, foundDocumentId := range index.mappedData[searchableString] {
 			foundDocumentIds.Add(index.documents[foundDocumentId].Id)
 		}
 
-		for key := range index.mappedIndexData.mappedData {
+		for key := range index.mappedData {
 			if LevenshteinDistance(searchableString, key) == MAXIMUM_ALLOWED_DISTANCE {
-				for _, foundDocumentId := range index.mappedIndexData.mappedData[key] {
+				for _, foundDocumentId := range index.mappedData[key] {
 					foundDocumentIds.Add(index.documents[foundDocumentId].Id)
 				}
 			}
@@ -74,7 +75,8 @@ func (index *Index) searchByMust(searchableWords []string) []models.IndexDocumen
 	includedWords := make(map[int64][]int)
 
 	for idx, searchableString := range searchableWords {
-		for _, foundDocumentId := range index.mappedIndexData.mappedData[searchableString] {
+		searchableString = TransformStrings(searchableString)
+		for _, foundDocumentId := range index.mappedData[searchableString] {
 			includedWords[foundDocumentId] = append(includedWords[foundDocumentId], idx)
 		}
 	}
