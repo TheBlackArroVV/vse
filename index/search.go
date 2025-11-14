@@ -30,12 +30,8 @@ func (index *Index) Search(searchableString string) []models.IndexDocument {
 func (index *Index) SearchByQuery(query Query) []models.IndexDocument {
 	foundDocuments := IndexDocumentSet{}
 
-	for _, foundDocument := range index.searchByShould(query.Should) {
-		foundDocuments.Add(foundDocument)
-	}
-	for _, foundDocument := range index.searchByMust(query.Must) {
-		foundDocuments.Add(foundDocument)
-	}
+	foundDocuments.AddMany(index.searchByShould(query.Should))
+	foundDocuments.AddMany(index.searchByMust(query.Must))
 
 	return foundDocuments.Values
 }

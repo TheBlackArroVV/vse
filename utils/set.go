@@ -27,21 +27,22 @@ type IndexDocumentSet struct {
 }
 
 func (set *IndexDocumentSet) Add(newValue models.IndexDocument) *IndexDocumentSet {
-	alreadyPresent := false
-
 	for _, indexDocument := range set.Values {
-		if newValue.Id == indexDocument.Id {
-			alreadyPresent = true
-			break
+		if indexDocument.Equals(newValue) {
+			return set
 		}
-	}
-
-	if alreadyPresent {
-		return set
 	}
 
 	set.Values = append(set.Values, newValue)
 	set.Length = set.Length + 1
+
+	return set
+}
+
+func (set *IndexDocumentSet) AddMany(newValues []models.IndexDocument) *IndexDocumentSet {
+	for _, value := range newValues {
+		set.Add(value)
+	}
 
 	return set
 }
