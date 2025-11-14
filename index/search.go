@@ -1,8 +1,8 @@
 package index
 
 import (
-	"elastic_go/models"
-	. "elastic_go/utils"
+	"vse/models"
+	. "vse/utils"
 )
 
 const MAXIMUM_ALLOWED_DISTANCE = 1

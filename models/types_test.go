@@ -1,8 +1,8 @@
 package models_test
 
 import (
-	"elastic_go/models"
 	"testing"
+	"vse/models"
 )
 
 func TestIndexDocument_Equals(t *testing.T) {

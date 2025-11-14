@@ -1,9 +1,9 @@
 package main
 
 import (
-	"elastic_go/index"
-	"elastic_go/models"
 	"fmt"
+	"vse/index"
+	"vse/models"
 )
 
 type Query = models.Query

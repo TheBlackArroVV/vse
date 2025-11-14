@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"elastic_go/models"
 	"slices"
+	"vse/models"
 )
 
 type Set[T int | int64] struct {

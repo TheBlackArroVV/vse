@@ -1,8 +1,8 @@
 package index
 
 import (
-	"elastic_go/models"
 	"testing"
+	"vse/models"
 )
 
 func TestSearch(t *testing.T) {

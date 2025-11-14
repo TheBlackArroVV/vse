@@ -1,8 +1,8 @@
 package utils_test
 
 import (
-	"elastic_go/utils"
 	"testing"
+	"vse/utils"
 )
 
 func TestLevenshteinDistance(t *testing.T) {

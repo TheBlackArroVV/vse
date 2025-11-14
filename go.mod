@@ -1,3 +1,3 @@
-module elastic_go
+module vse
 
 go 1.24.0

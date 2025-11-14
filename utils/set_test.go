@@ -1,9 +1,9 @@
 package utils_test
 
 import (
-	"elastic_go/models"
-	"elastic_go/utils"
 	"testing"
+	"vse/models"
+	"vse/utils"
 )
 
 func TestSetInt_Add(t *testing.T) {

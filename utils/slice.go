@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"elastic_go/models"
 	"slices"
+	"vse/models"
 )
 
 func SortArray(arr []int64, order string) {

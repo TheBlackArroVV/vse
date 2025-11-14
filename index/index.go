@@ -1,9 +1,9 @@
 package index
 
 import (
-	"elastic_go/models"
-	"elastic_go/utils"
 	"strings"
+	"vse/models"
+	"vse/utils"
 )
 
 type Index struct {
