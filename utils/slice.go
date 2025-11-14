@@ -6,18 +6,7 @@ import (
 )
 
 func SortArray(arr []int64, order string) {
-	lower := 0
-	high := 0
-
-	if order == "ASC" {
-		lower = -1
-		high = 1
-	}
-
-	if order == "DESC" {
-		lower = 1
-		high = -1
-	}
+	lower, high := defineOrderingDirection(order)
 
 	slices.SortFunc(arr, func(a, b int64) int {
 		if a < b {
@@ -31,18 +20,7 @@ func SortArray(arr []int64, order string) {
 }
 
 func SortIndexDocument(arr []models.IndexDocument, order string) {
-	lower := 0
-	high := 0
-
-	if order == "ASC" {
-		lower = -1
-		high = 1
-	}
-
-	if order == "DESC" {
-		lower = 1
-		high = -1
-	}
+	lower, high := defineOrderingDirection(order)
 
 	slices.SortFunc(arr, func(a, b models.IndexDocument) int {
 		if a.Id < b.Id {
@@ -54,4 +32,21 @@ func SortIndexDocument(arr []models.IndexDocument, order string) {
 		return 0
 	})
 
+}
+
+func defineOrderingDirection(order string) (int, int) {
+	lower := 0
+	high := 0
+
+	if order == string(models.ASC) {
+		lower = -1
+		high = 1
+	}
+
+	if order == string(models.DESC) {
+		lower = 1
+		high = -1
+	}
+
+	return lower, high
 }

@@ -22,7 +22,7 @@ func (index *Index) Search(searchableString string) []models.IndexDocument {
 		}
 	}
 
-	SortArray(foundDocumentIds.Values, "ASC")
+	SortArray(foundDocumentIds.Values, string(models.ASC))
 
 	return index.FindDocumentsByIds(foundDocumentIds.Values)
 }
@@ -34,7 +34,7 @@ func (index *Index) SearchByQuery(query models.Query) []models.IndexDocument {
 	foundDocuments.AddMany(index.searchByMust(query.Must))
 
 	if string(query.Order) == "" {
-		query.Order = "ASC"
+		query.Order = models.ASC
 	}
 	SortIndexDocument(foundDocuments.Values, string(query.Order))
 
