@@ -10,17 +10,8 @@ const MAXIMUM_ALLOWED_DISTANCE = 1
 func (index *Index) Search(searchableString string) []models.IndexDocument {
 	foundDocumentIds := Set[int64]{}
 
-	for _, foundDocumentId := range index.mappedData[searchableString] {
-		foundDocumentIds.Add(index.documents[foundDocumentId].Id)
-	}
-
-	for key := range index.mappedData {
-		if LevenshteinDistance(searchableString, key) == MAXIMUM_ALLOWED_DISTANCE {
-			for _, foundDocumentId := range index.mappedData[key] {
-				foundDocumentIds.Add(index.documents[foundDocumentId].Id)
-			}
-		}
-	}
+	index.searchByWord(searchableString, &foundDocumentIds)
+	index.searchBySimmilarWords(searchableString, &foundDocumentIds)
 
 	SortArray(foundDocumentIds.Values, string(models.ASC))
 
@@ -36,6 +27,7 @@ func (index *Index) SearchByQuery(query models.Query) []models.IndexDocument {
 	if string(query.Order) == "" {
 		query.Order = models.ASC
 	}
+
 	SortIndexDocument(foundDocuments.Values, string(query.Order))
 
 	return foundDocuments.Values
@@ -50,17 +42,8 @@ func (index *Index) searchByShould(searchableWords []string) []models.IndexDocum
 
 	for _, searchableString := range searchableWords {
 		searchableString = TransformStrings(searchableString)
-		for _, foundDocumentId := range index.mappedData[searchableString] {
-			foundDocumentIds.Add(index.documents[foundDocumentId].Id)
-		}
-
-		for key := range index.mappedData {
-			if LevenshteinDistance(searchableString, key) == MAXIMUM_ALLOWED_DISTANCE {
-				for _, foundDocumentId := range index.mappedData[key] {
-					foundDocumentIds.Add(index.documents[foundDocumentId].Id)
-				}
-			}
-		}
+		index.searchByWord(searchableString, &foundDocumentIds)
+		index.searchBySimmilarWords(searchableString, &foundDocumentIds)
 	}
 
 	return index.FindDocumentsByIds(foundDocumentIds.Values)
@@ -88,4 +71,18 @@ func (index *Index) searchByMust(searchableWords []string) []models.IndexDocumen
 	}
 
 	return foundDocuments
+}
+
+func (index *Index) searchByWord(searchableWord string, foundDocumentIds *Set[int64]) {
+	for _, foundDocumentId := range index.mappedData[searchableWord] {
+		foundDocumentIds.Add(index.documents[foundDocumentId].Id)
+	}
+}
+
+func (index *Index) searchBySimmilarWords(searchableWord string, foundDocumentIds *Set[int64]) {
+	for key := range index.mappedData {
+		if LevenshteinDistance(searchableWord, key) == MAXIMUM_ALLOWED_DISTANCE {
+			index.searchByWord(key, foundDocumentIds)
+		}
+	}
 }
